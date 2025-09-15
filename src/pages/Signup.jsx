@@ -1,4 +1,4 @@
-import { setCredentials } from '@/redux/authSlice';
+import { setCredentials, setUser } from '@/redux/authSlice';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -99,10 +99,13 @@ const SignupPage = () => {
       try {
         const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/company`,formData);
         dispatch(setCredentials({ token: response.data.accessToken }));
+        dispatch(setUser({user: response.data.user}))
         setIsSubmitting(false);
         toast.success('Account created successfully');
         navigate('/dashboard');
       } catch (error) {
+        const message = error?.response?.data.message || error.message;
+        toast.error(message);
         console.log(error.response.data);
         setIsSubmitting(false);
       }
